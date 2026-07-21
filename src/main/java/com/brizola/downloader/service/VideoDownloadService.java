@@ -1,7 +1,9 @@
 package com.brizola.downloader.service;
 
+import com.brizola.downloader.model.BatchSubmitResult;
 import com.brizola.downloader.model.DownloadJob;
 import com.brizola.downloader.model.JobStatus;
+import com.brizola.downloader.model.RejectedUrl;
 import com.brizola.downloader.repository.JobStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -29,35 +33,51 @@ public class VideoDownloadService {
             "instagram.com", "www.instagram.com"
     );
 
+    private final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
+
     @Autowired
     private JobStore jobStore;
 
-    public String submitJob(String url) {
-        validateUrl(url);
+    public BatchSubmitResult submitJobs(List<String> urls) {
+        List<String> jobIds = new ArrayList<>();
+        List<RejectedUrl> rejected = new ArrayList<>();
 
-        String jobId = UUID.randomUUID().toString();
-        DownloadJob job = new DownloadJob();
-        job.setId(jobId);
-        job.setUrl(url);
-        job.setStatus(JobStatus.PENDING);
-        jobStore.save(job);
+        for (String url : urls) {
+            String validationError = validate(url);
 
-        // run async
-        CompletableFuture.runAsync(() -> processDownload(job));
+            if (validationError != null) {
+                rejected.add(new RejectedUrl(url, validationError));
+                continue;
+            }
 
-        return jobId;
+            String jobId = UUID.randomUUID().toString();
+            DownloadJob job = new DownloadJob();
+            job.setId(jobId);
+            job.setUrl(url);
+            job.setStatus(JobStatus.PENDING);
+            jobStore.save(job);
+
+            jobIds.add(jobId);
+            downloadExecutor.submit(() -> processDownload(job));
+        }
+
+        return new BatchSubmitResult(jobIds, rejected);
     }
 
-    private void validateUrl(String url) {
+    private String validate(String url) {
+        if (url == null || url.isBlank()) {
+            return "URL is empty";
+        }
         try {
             URI uri = new URI(url);
             String host = uri.getHost();
             if (host == null || ALLOWED_HOSTS.stream().noneMatch(host::endsWith)) {
-                throw new IllegalArgumentException("Unsupported host: " + host);
+                return "Unsupported host: " + host;
             }
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URL");
+            return "Invalid URL format";
         }
+        return null;
     }
 
     private void processDownload(DownloadJob job) {

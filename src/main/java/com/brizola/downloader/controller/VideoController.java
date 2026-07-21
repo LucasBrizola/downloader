@@ -1,5 +1,6 @@
 package com.brizola.downloader.controller;
 
+import com.brizola.downloader.model.BatchSubmitResult;
 import com.brizola.downloader.model.DownloadJob;
 import com.brizola.downloader.model.DownloadRequest;
 import com.brizola.downloader.model.JobStatus;
@@ -29,15 +30,20 @@ public class VideoController {
     private JobStore jobStore;
 
     @PostMapping("/download")
-    public ResponseEntity<?> startDownload(@RequestBody DownloadRequest request) {
-        try {
-            String jobId = downloadService.submitJob(request.getUrl());
-            return ResponseEntity.accepted().body(Map.of("jobId", jobId));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    public ResponseEntity<?> startDownloads(@RequestBody DownloadRequest request) {
+        if (request.getUrls() == null || request.getUrls().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "urls list is empty"));
         }
+
+        BatchSubmitResult result = downloadService.submitJobs(request.getUrls());
+
+        return ResponseEntity.accepted().body(Map.of(
+                "queued", result.getJobIds(),
+                "rejected", result.getRejected()
+        ));
     }
 
+    // getStatus and getFile methods stay exactly as they were
     @GetMapping("/status/{jobId}")
     public ResponseEntity<?> getStatus(@PathVariable String jobId) {
         DownloadJob job = jobStore.get(jobId);

@@ -1,8 +1,10 @@
 package com.brizola.downloader.model;
 
-public class DownloadRequest {
-    private String url;
+import java.util.List;
 
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
+public class DownloadRequest {
+    private List<String> urls;
+
+    public List<String> getUrls() { return urls; }
+    public void setUrls(List<String> urls) { this.urls = urls; }
 }

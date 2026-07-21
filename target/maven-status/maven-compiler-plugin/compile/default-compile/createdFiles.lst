@@ -1,4 +1,6 @@
+com\brizola\downloader\model\BatchSubmitResult.class
 com\brizola\downloader\controller\VideoController.class
+com\brizola\downloader\model\RejectedUrl.class
 com\brizola\downloader\service\VideoDownloadService.class
 com\brizola\downloader\model\JobStatus.class
 com\brizola\downloader\repository\JobStore.class

@@ -43,7 +43,6 @@ public class VideoController {
         ));
     }
 
-    // getStatus and getFile methods stay exactly as they were
     @GetMapping("/status/{jobId}")
     public ResponseEntity<?> getStatus(@PathVariable String jobId) {
         DownloadJob job = jobStore.get(jobId);

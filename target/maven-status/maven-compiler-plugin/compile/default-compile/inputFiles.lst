@@ -1,9 +1,0 @@
-C:\projetos\downloader\src\main\java\com\brizola\downloader\controller\VideoController.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\DownloaderApplication.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\model\BatchSubmitResult.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\model\DownloadJob.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\model\DownloadRequest.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\model\JobStatus.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\model\RejectedUrl.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\repository\JobStore.java
-C:\projetos\downloader\src\main\java\com\brizola\downloader\service\VideoDownloadService.java

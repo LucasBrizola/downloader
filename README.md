@@ -2,11 +2,17 @@
 
 a simple youtube/instagram video downloader
 
+frontend is hosted on netlify, backend is hosted locally, using docker and ngrok to create a connection to use with netlify frontend.
+docker runs with yt-dlp and ffmpeg.
+videos are first downloaded to a docker container on host pc, then it can be downloaded to the frontend user.
+
 HOW TO RUN:
 
 1) create .jar
 2) docker build -t <jar name minus .jar> . (example: "docker build -t downloader .")
 3) docker compose up
+4) using ngrok : ngrok http 8080
+
 
 ENDPOINTS:
 

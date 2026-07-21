@@ -1,0 +1,7 @@
+com\brizola\downloader\controller\VideoController.class
+com\brizola\downloader\service\VideoDownloadService.class
+com\brizola\downloader\model\JobStatus.class
+com\brizola\downloader\repository\JobStore.class
+com\brizola\downloader\DownloaderApplication.class
+com\brizola\downloader\model\DownloadRequest.class
+com\brizola\downloader\model\DownloadJob.class
